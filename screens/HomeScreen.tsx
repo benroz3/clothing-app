@@ -1,5 +1,12 @@
 import { useEffect } from "react";
-import { BackHandler, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  BackHandler,
+  Button,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useDispatch, useSelector } from "react-redux";
@@ -75,6 +82,29 @@ const HomeScreen: React.FC<{
           <Text style={styles.text}>Completed Sets: {setsCounter}</Text>
           <Text style={styles.text}>Current Set Status: {status}/3</Text>
         </View>
+        <View style={styles.buttons}>
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Choose Shirt"
+              color={"gray"}
+              onPress={() => navigation.navigate("shirts")}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Choose Pants"
+              color={"gray"}
+              onPress={() => navigation.navigate("pants")}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Choose Shoes"
+              color={"gray"}
+              onPress={() => navigation.navigate("shoes")}
+            />
+          </View>
+        </View>
         {status === 3 && (
           <Pressable onPress={successHandler} style={styles.button}>
             <Text style={styles.buttonText}>Success!</Text>
@@ -90,7 +120,6 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    height: "80%",
   },
   wrapper: {
     display: "flex",
@@ -102,6 +131,13 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 10,
     backgroundColor: "lightgray",
+  },
+  buttons: {
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  buttonContainer:{
+    margin:10
   },
   text: {
     fontSize: 20,

@@ -18,6 +18,8 @@ const ClothingItem: React.FC<{
   const dispatch = useDispatch();
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [showSize, setShowSize] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
 
   // Updating the state with the chosen clothes
   const handleChoose = () => {
@@ -43,8 +45,37 @@ const ClothingItem: React.FC<{
     } else Toast.show("Please choose size and/or color!", Toast.SHORT);
   };
 
+  // Buttons handlers
+  const handleShowSize = () => {
+    setShowSize(true);
+  };
+
+  const handleSizeSelection = (size: string) => {
+    setSelectedSize(size);
+    setShowAdd(true);
+  };
+
   return (
     <View style={styles.container}>
+      {showAdd && (
+        <View style={styles.addContainer}>
+          <Text style={styles.addText}>
+            Are you sure you want to add this item?
+          </Text>
+          <View style={styles.addButtons}>
+            <View style={styles.button}>
+              <Button title="Yes" color={"darkgreen"} onPress={handleChoose} />
+            </View>
+            <View>
+              <Button
+                title="No"
+                color={"darkred"}
+                onPress={() => setShowAdd(false)}
+              />
+            </View>
+          </View>
+        </View>
+      )}
       <View style={styles.innerContainer}>
         {item.type === "shirt" ? ( // Showing a matching image according the type of clothes
           <Image
@@ -76,7 +107,7 @@ const ClothingItem: React.FC<{
             <ModalDropdown
               options={item.colors.map(String)}
               defaultIndex={0}
-              defaultValue={item.colors[0]}
+              defaultValue={"Choose color"}
               onSelect={(index, value) => setSelectedColor(value.toString())}
               style={styles.dropdown}
               textStyle={styles.dropdownText}
@@ -84,34 +115,48 @@ const ClothingItem: React.FC<{
               dropdownTextStyle={styles.dropdownOptionText}
             />
           </View>
-          <View style={styles.titleWrapper}>
-            <Text style={styles.title}>Sizes: </Text>
-            <ModalDropdown
-              options={item.sizes.map(String)}
-              defaultIndex={0}
-              defaultValue={item.sizes[0].toString()}
-              onSelect={(index, value) => setSelectedSize(value.toString())}
-              style={styles.dropdown}
-              textStyle={styles.dropdownText}
-              dropdownStyle={styles.dropdownContainer}
-              dropdownTextStyle={styles.dropdownOptionText}
-            />
-          </View>
+          {showSize && (
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title}>Sizes: </Text>
+              {item.sizes.map((size) => (
+                <View style={styles.button} key={size.toString()}>
+                  <Button
+                    title={size.toString()}
+                    color={
+                      // Matching the button color to the default value / selected color
+                      (selectedColor === "" && item.colors[0] === "white") ||
+                      selectedColor === "white"
+                        ? "black"
+                        : selectedColor === ""
+                        ? item.colors[0]
+                        : selectedColor
+                    }
+                    onPress={() => {
+                      handleSizeSelection(size.toString());
+                    }}
+                  />
+                </View>
+              ))}
+            </View>
+          )}
         </View>
-        <Pressable style={styles.buttonContainer}>
-          <Button
-            title="Choose"
-            color={ // Matching the button color to the default value / selected color
-              (selectedColor === "" && item.colors[0] === "white") ||
-              selectedColor === "white"
-                ? "black"
-                : selectedColor === ""
-                ? item.colors[0]
-                : selectedColor
-            }
-            onPress={handleChoose}
-          />
-        </Pressable>
+        {!showSize && (
+          <Pressable style={styles.buttonContainer}>
+            <Button
+              title={"Choose Size"}
+              color={
+                // Matching the button color to the default value / selected color
+                (selectedColor === "" && item.colors[0] === "white") ||
+                selectedColor === "white"
+                  ? "black"
+                  : selectedColor === ""
+                  ? item.colors[0]
+                  : selectedColor
+              }
+              onPress={handleShowSize}
+            />
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -135,15 +180,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   img: {
-    flex: 1,
     marginRight: 20,
-    width: 50,
+    width: "10%",
     height: 50,
   },
   buttonContainer: {
     flex: 4,
     width: 100,
     alignItems: "flex-end",
+  },
+  button: {
+    marginRight: 10,
   },
   titleWrapper: {
     flex: 4,
@@ -175,6 +222,28 @@ const styles = StyleSheet.create({
   dropdownOptionText: {
     fontSize: 24,
     backgroundColor: "lightgray",
+  },
+  addContainer: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+    padding: 20,
+    margin: 20,
+    borderColor: "black",
+    elevation: 5,
+    borderRadius: 10,
+    backgroundColor: "lightgray",
+  },
+  addButtons: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+  },
+  addText: {
+    fontSize: 16,
+    marginBottom: 5,
   },
 });
 
